@@ -12,10 +12,10 @@ import {
 import { ChatService, UserService } from '@/services/chat';
 import type { AppUser, Conversation, Message } from '@/services/chat';
 import { socketService } from '@/services/socket';
+import { ChatListSkeleton, ChatMessagesSkeleton } from '@/components/Skeleton';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -71,6 +71,7 @@ export default function ChatScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListLoading, setIsListLoading] = useState(true);
   const flatListRef = useRef<FlatList>(null);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -142,9 +143,11 @@ export default function ChatScreen() {
   // ── API calls ────────────────────────────────────────────────────────────────
   const loadConversations = async () => {
     try {
+      setIsListLoading(true);
       const data = await ChatService.getConversations();
       dispatch(setConversations((data.conversations ?? []).map((c: Conversation) => ({ ...c, id: String(c.id), name: getConvTitle(c) }))));
     } catch {}
+    finally { setIsListLoading(false); }
   };
 
   const loadUsers = async () => {
@@ -239,6 +242,7 @@ export default function ChatScreen() {
 
   // ── Render: conversation list ─────────────────────────────────────────────
   if (!currentConversation) {
+    if (isListLoading) return <ChatListSkeleton />;
     return (
       <View style={styles.container}>
         {/* Search */}
@@ -353,7 +357,7 @@ export default function ChatScreen() {
       >
         {/* Messages */}
         {isLoading ? (
-          <ActivityIndicator style={{ flex: 1 }} color="#2563eb" />
+          <ChatMessagesSkeleton />
         ) : (
           <FlatList
             ref={flatListRef}

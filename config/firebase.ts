@@ -1,14 +1,17 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { initializeAuth, getAuth } from 'firebase/auth';
 import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+
+const extra = Constants.expoConfig?.extra as Record<string, string>;
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCjJfvGyxZp22ZoE4zW1tFZYN_EG4jKNh4',
-  authDomain: 'appls-552bd.firebaseapp.com',
-  projectId: 'appls-552bd',
-  storageBucket: 'appls-552bd.firebasestorage.app',
-  messagingSenderId: '123724643020',
-  appId: '1:123724643020:web:2e593537c81d8db804a069',
+  apiKey: extra.firebaseApiKey,
+  authDomain: extra.firebaseAuthDomain,
+  projectId: extra.firebaseProjectId,
+  storageBucket: extra.firebaseStorageBucket,
+  messagingSenderId: extra.firebaseMessagingSenderId,
+  appId: extra.firebaseAppId,
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];

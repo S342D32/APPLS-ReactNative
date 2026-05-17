@@ -1,17 +1,17 @@
+import { QuizService } from '@/services/quiz';
+import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
   ActivityIndicator,
-  Modal,
   FlatList,
+  Modal,
   SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { QuizService } from '@/services/quiz';
 
 // Types
 type Topic = { id: number; name: string };
@@ -159,6 +159,23 @@ export default function QuizSetupScreen() {
             Configure your assessment below
           </Text>
         </View>
+
+        {/* PDF Quiz entry card */}
+        <TouchableOpacity
+          onPress={() => router.push('/(app)/pdf-quiz' as any)}
+          activeOpacity={0.8}
+          className="bg-blue-600 rounded-2xl p-4 mb-6 flex-row items-center gap-4"
+          style={{ elevation: 3, shadowColor: '#2563eb', shadowOpacity: 0.3, shadowRadius: 8 }}
+        >
+          <View className="w-12 h-12 rounded-xl bg-white/20 items-center justify-center">
+            <Text style={{ fontSize: 24 }}>📄</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-white font-bold text-base">Doc Intelligence</Text>
+            <Text className="text-blue-100 text-xs mt-0.5">Upload a PDF and generate an AI quiz</Text>
+          </View>
+          <Text className="text-white text-xl">›</Text>
+        </TouchableOpacity>
 
         {/* Error */}
         {!!error && (

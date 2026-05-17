@@ -8,10 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -78,6 +80,17 @@ export default function LoginScreen() {
             <Text className="text-white font-semibold text-base">Sign In</Text>
           )}
         </TouchableOpacity>
+        <View className="mt-4 items-center">
+          <Text className="text-gray-500">
+            Don't have an account?{' '}
+            <Text
+              className="text-blue-400 font-medium"
+              onPress={() => router.replace('/(auth)/signup')}
+            >
+              Sign up
+            </Text>
+          </Text>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );

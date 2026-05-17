@@ -1,6 +1,15 @@
 import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from '../index';
 
+export type QuizQuestion = {
+  question?: string;
+  options?: string[];
+  correctAnswer?: string;
+  userAnswer?: string;
+  isCorrect?: boolean;
+  explanation?: string;
+};
+
 export type QuizAttempt = {
   id?: string;
   start_time?: string;
@@ -12,6 +21,7 @@ export type QuizAttempt = {
   topic?: string;
   sub_topic?: string;
   subTopic?: string;
+  questions?: QuizQuestion[];
 };
 
 type AnalyticsState = {

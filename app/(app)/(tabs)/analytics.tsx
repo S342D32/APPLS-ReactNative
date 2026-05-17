@@ -1,11 +1,10 @@
+import { AnalyticsSkeleton } from "@/components/Skeleton";
 import { AnalyticsService } from "@/services/quiz";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { removeAttempt, selectQuizStats, setAttempts } from "@/store/slices/analyticsSlice";
-import type { QuizAttempt } from "@/store/slices/analyticsSlice";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   ScrollView,
   Text,
@@ -107,6 +106,13 @@ export default function AnalyticsScreen() {
   useEffect(() => {
     fetchQuizAttempts();
   }, []);
+
+  // Re-fetch whenever the analytics tab comes into focus (e.g. after a new quiz)
+  useFocusEffect(
+    useCallback(() => {
+      fetchQuizAttempts();
+    }, [backendUser?.id])
+  );
 
   useEffect(() => {
     if (quizAttempts.length) {
@@ -219,12 +225,7 @@ export default function AnalyticsScreen() {
   const { progressData, topicData } = getChartData();
 
   if (isLoading) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#3b82f6" />
-        <Text className="text-gray-400 mt-3">Loading quiz data...</Text>
-      </View>
-    );
+    return <AnalyticsSkeleton />;
   }
 
   if (authError) {
@@ -346,8 +347,15 @@ export default function AnalyticsScreen() {
             ).toLocaleDateString();
 
             return (
-              <View
+              <TouchableOpacity
                 key={attempt.id ?? i}
+                onPress={() =>
+                  router.push({
+                    pathname: '/(app)/attempt-detail' as any,
+                    params: { attemptId: attempt.id },
+                  })
+                }
+                activeOpacity={0.8}
                 className="bg-white rounded-2xl p-4 border border-gray-100"
                 style={{ shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 }}
               >
@@ -376,7 +384,7 @@ export default function AnalyticsScreen() {
                     </TouchableOpacity>
                   )}
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>

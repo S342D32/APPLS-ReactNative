@@ -27,6 +27,26 @@ export default function AppLayout() {
           animation: 'fade',
         }}
       />
+
+      {/* Attempt detail — custom header with back button */}
+      <Stack.Screen
+        name="attempt-detail"
+        options={{
+          header: () => <AppHeader title="Attempt Details" showBack />,
+          headerShown: true,
+          animation: 'slide_from_right',
+        }}
+      />
+
+      {/* PDF Quiz — custom header with back button */}
+      <Stack.Screen
+        name="pdf-quiz"
+        options={{
+          header: () => <AppHeader title="Doc Intelligence" showBack />,
+          headerShown: true,
+          animation: 'slide_from_right',
+        }}
+      />
     </Stack>
   );
 }

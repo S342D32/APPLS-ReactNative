@@ -1,8 +1,8 @@
+import { auth } from '@/config/firebase';
+import { store } from '@/store';
+import { clearSession, setSession } from '@/store/slices/authSlice';
 import axios from 'axios';
 import Constants from 'expo-constants';
-import { store } from '@/store';
-import { setSession, clearSession } from '@/store/slices/authSlice';
-import { auth } from '@/config/firebase';
 
 export const BASE_URL = (Constants.expoConfig?.extra?.backendUrl as string) ?? 'http://10.150.211.202:5000';
 
@@ -11,6 +11,28 @@ const api = axios.create({
   timeout: 90000,
   headers: { 'Content-Type': 'application/json' },
 });
+
+// ── Dev logger — shows every request & response in the Expo terminal ─────────
+if (__DEV__) {
+  api.interceptors.request.use((config) => {
+    console.log(`\n🌐 REQUEST  ${config.method?.toUpperCase()} ${config.url}`);
+    if (config.data) console.log('📤 PAYLOAD :', JSON.stringify(config.data, null, 2));
+    return config;
+  });
+
+  api.interceptors.response.use(
+    (response) => {
+      console.log(`✅ RESPONSE ${response.status} ${response.config.url}`);
+      console.log('📥 DATA    :', JSON.stringify(response.data, null, 2));
+      return response;
+    },
+    (error) => {
+      console.log(`❌ ERROR    ${error.response?.status ?? 'NO_STATUS'} ${error.config?.url}`);
+      console.log('📥 ERROR DATA:', JSON.stringify(error.response?.data, null, 2));
+      return Promise.reject(error);
+    }
+  );
+}
 
 // Attach backend JWT from Redux store to every request
 api.interceptors.request.use((config) => {

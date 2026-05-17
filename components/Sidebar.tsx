@@ -31,7 +31,7 @@ const NAV_ITEMS = [
   { label: 'Dashboard',   icon: '⊞',  route: '/(app)/(tabs)'           },
   { label: 'Quiz',        icon: '✎',  route: '/(app)/(tabs)/quiz'      },
   { label: 'AI Chat',     icon: '💬', route: '/(app)/(tabs)/chat'      },
-  { label: 'PDF Upload',  icon: '📄', route: '/(app)/(tabs)/pdf'       },
+  { label: 'Doc Intelligence', icon: '📄', route: '/(app)/pdf-quiz'   },
   { label: 'Analytics',   icon: '📊', route: '/(app)/(tabs)/analytics' },
   { label: 'Path Finder', icon: '🗺️', route: '/(app)/(tabs)/pathfinder'},
   { label: 'Profile',     icon: '👤', route: '/(app)/(tabs)/profile'   },

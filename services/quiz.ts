@@ -50,3 +50,19 @@ export const AnalyticsService = {
   deleteQuizAttempt: (attemptId: string) =>
     api.delete(`/api/quiz-attempts/${attemptId}`).then((r) => r.data),
 };
+
+// PDF / AI Service
+export const AIService = {
+  processPDF: (formData: FormData) =>
+    api.post('/api/process-pdf', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
+    }).then((r) => r.data as { questions: PDFQuestion[] }),
+};
+
+export type PDFQuestion = {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+};

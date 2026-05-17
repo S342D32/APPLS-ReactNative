@@ -1,16 +1,17 @@
+import { AnalyticsService, QuizService } from '@/services/quiz';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { setAttempts } from '@/store/slices/analyticsSlice';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
-  View,
+  ActivityIndicator,
+  Animated,
+  SafeAreaView,
+  ScrollView,
   Text,
   TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-  SafeAreaView,
-  Animated,
+  View,
 } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useAppSelector } from '@/store/hooks';
-import { QuizService } from '@/services/quiz';
 
 type Question = {
   question: string;
@@ -21,6 +22,7 @@ type Question = {
 
 export default function QuizPlayScreen() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   // Read backendUser from Redux store (persisted via redux-persist)
   const backendUser = useAppSelector((state) => state.auth.backendUser);
   const params = useLocalSearchParams<{
@@ -154,7 +156,7 @@ export default function QuizPlayScreen() {
 
       // Save attempt to backend using numeric DB user id (not Firebase UID)
       if (backendUser?.id) {
-        await QuizService.saveQuizAttempt({
+        const savedAttempt = await QuizService.saveQuizAttempt({
           userId: backendUser.id,
           topic: params.topic,
           subTopic: params.subtopic,
@@ -172,9 +174,18 @@ export default function QuizPlayScreen() {
               isCorrect:
                 !!letter &&
                 letter.toUpperCase() === q.correctAnswer.toUpperCase(),
+              explanation: q.explanation,
             };
           }),
         });
+
+        // Refresh analytics Redux state with latest attempts from backend
+        if (backendUser?.id) {
+          try {
+            const response = await AnalyticsService.getQuizAttempts(String(backendUser.id));
+            dispatch(setAttempts(response.quizAttempts || []));
+          } catch (_) {}
+        }
       }
 
       // Navigate to results
